@@ -7,7 +7,7 @@
 Switchboard plans a task, sends each step to the cheapest Claude model that can do it well, checks the work, and switches models mid-task: up when a check fails, back down when the work gets easy.
 
 [![Live demo](https://img.shields.io/badge/demo-switchboard.mridulmerges.ca-10b981?style=flat-square)](https://switchboard.mridulmerges.ca)
-[![Tests](https://img.shields.io/badge/tests-8%20passing-10b981?style=flat-square)](test/engine.test.ts)
+[![CI](https://github.com/mridulsharma2002/switchboard/actions/workflows/ci.yml/badge.svg)](https://github.com/mridulsharma2002/switchboard/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&logo=typescript&logoColor=white)](tsconfig.json)
 [![Claude API](https://img.shields.io/badge/Claude%20API-Haiku%20·%20Sonnet%20·%20Opus%20·%20Fable-8b5cf6?style=flat-square)](#models-and-prices)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)](LICENSE)
