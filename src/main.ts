@@ -119,6 +119,7 @@ function preview() {
   });
   $("switches").textContent = String(switches);
   setStats(d.total, d.opus);
+  $("spentLabel").textContent = "Estimated cost";
   $("answer").textContent = "Preview only. Add your API key and press Run live to get the answer.";
   $("answer").classList.add("muted");
   drawLanes();
@@ -136,6 +137,7 @@ async function runLive() {
   setBusy(true);
   resetView();
   $("routeNote").textContent = "Live run";
+  $("spentLabel").textContent = "Spent";
   $("answer").textContent = ""; $("answer").classList.remove("muted");
   let spent = 0, opus = 0, liveStep = -1, buffer = "";
 

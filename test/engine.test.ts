@@ -52,7 +52,7 @@ describe("engine", () => {
   ] };
 
   it("switches down for a simple step and composes on Sonnet", async () => {
-    const e = await run(fake({ plan }), "Design a distributed job queue with retries and write the docs. Then document it.\n1. design\n2. docs");
+    const e = await run(fake({ plan }), "Design a distributed job queue with retries and the worker. Then ship it.\n1. design\n2. client");
     const switches = e.filter((x) => x.type === "switch");
     expect(switches[0]).toMatchObject({ from: "opus", to: "haiku", direction: "down" });
     expect(e.at(-1)).toMatchObject({ type: "final" });
@@ -69,13 +69,13 @@ describe("engine", () => {
 
   it("falls back when a model is overloaded", async () => {
     const llm = fake({ plan, failModels: ["opus"] });
-    const e = await run(llm, "Design a distributed job queue with retries and trade-offs\n1. design\n2. docs");
+    const e = await run(llm, "Design a distributed job queue with retries and trade-offs\n1. design\n2. client");
     expect(e.find((x) => x.type === "fallback")).toMatchObject({ from: "opus", to: "sonnet" });
   });
 
   it("refuses to escalate past the budget", async () => {
     const bad = { pass: false, score: 0.2, issue: "wrong" };
-    const e = await run(fake({ plan, checks: [bad] }), "Design a distributed job queue with retries and trade-offs\n1. design\n2. docs", { budgetUsd: 0.03 });
+    const e = await run(fake({ plan, checks: [bad] }), "Design a distributed job queue with retries and trade-offs\n1. design\n2. client", { budgetUsd: 0.03 });
     expect(e.find((x) => x.type === "budget")).toMatchObject({ message: expect.stringContaining("budget") });
   });
 
