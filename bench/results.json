@@ -1,0 +1,293 @@
+{
+  "generated": "2026-11-15",
+  "kind": "simulated",
+  "note": "No API calls. Compose mode: stitch. Routing is Switchboard's free rules; token counts come from the cost model in bench/run.ts. Prices: Claude API list prices per 1M tokens.",
+  "prices": {
+    "claude-haiku-5-5": {
+      "input": 0.1,
+      "output": 0.5
+    },
+    "claude-sonnet-5-5": {
+      "input": 2,
+      "output": 10
+    },
+    "claude-opus-5-5": {
+      "input": 4,
+      "output": 20
+    },
+    "claude-fable-5-2": {
+      "input": 8,
+      "output": 40
+    }
+  },
+  "runs": [
+    {
+      "mode": "save",
+      "escalationScenario": false,
+      "prompts": 60,
+      "steps": 81,
+      "switchboardCost": 1.1240750000000002,
+      "opusCost": 1.7767039999999998,
+      "saved": 0.3673256772090341,
+      "switchboardTokens": 267213,
+      "opusTokens": 102136,
+      "modelShare": {
+        "haiku": 0.5061728395061729,
+        "sonnet": 0.3950617283950617,
+        "opus": 0.07407407407407407,
+        "fable": 0.024691358024691357
+      },
+      "escalations": 0,
+      "cheaperOn": 54,
+      "routingAgreement": {
+        "matched": 37,
+        "of": 50
+      },
+      "categories": [
+        {
+          "cat": "Quick question",
+          "prompts": 12,
+          "switchboard": 0.0016315000000000001,
+          "opus": 0.06526000000000001,
+          "saved": 0.975
+        },
+        {
+          "cat": "Rewrite & light writing",
+          "prompts": 10,
+          "switchboard": 0.0031439,
+          "opus": 0.11087599999999999,
+          "saved": 0.9716449006096901
+        },
+        {
+          "cat": "Everyday coding",
+          "prompts": 12,
+          "switchboard": 0.28575470000000003,
+          "opus": 0.3851,
+          "saved": 0.257972734354713
+        },
+        {
+          "cat": "Debugging",
+          "prompts": 8,
+          "switchboard": 0.32395809999999997,
+          "opus": 0.327244,
+          "saved": 0.01004113138819962
+        },
+        {
+          "cat": "Architecture & analysis",
+          "prompts": 8,
+          "switchboard": 0.176856,
+          "opus": 0.298964,
+          "saved": 0.4084371362438287
+        },
+        {
+          "cat": "Multi-step projects",
+          "prompts": 10,
+          "switchboard": 0.3327308,
+          "opus": 0.58926,
+          "saved": 0.4353412754980823
+        }
+      ]
+    },
+    {
+      "mode": "balanced",
+      "escalationScenario": false,
+      "prompts": 60,
+      "steps": 81,
+      "switchboardCost": 1.4445747999999998,
+      "opusCost": 1.7767039999999998,
+      "saved": 0.1869355840927921,
+      "switchboardTokens": 267213,
+      "opusTokens": 102136,
+      "modelShare": {
+        "haiku": 0.43209876543209874,
+        "sonnet": 0.30864197530864196,
+        "opus": 0.2345679012345679,
+        "fable": 0.024691358024691357
+      },
+      "escalations": 0,
+      "cheaperOn": 46,
+      "routingAgreement": {
+        "matched": 46,
+        "of": 50
+      },
+      "categories": [
+        {
+          "cat": "Quick question",
+          "prompts": 12,
+          "switchboard": 0.0016315000000000001,
+          "opus": 0.06526000000000001,
+          "saved": 0.975
+        },
+        {
+          "cat": "Rewrite & light writing",
+          "prompts": 10,
+          "switchboard": 0.020357899999999998,
+          "opus": 0.11087599999999999,
+          "saved": 0.8163903820484144
+        },
+        {
+          "cat": "Everyday coding",
+          "prompts": 12,
+          "switchboard": 0.28575470000000003,
+          "opus": 0.3851,
+          "saved": 0.257972734354713
+        },
+        {
+          "cat": "Debugging",
+          "prompts": 8,
+          "switchboard": 0.3603181,
+          "opus": 0.327244,
+          "saved": -0.10106862157900531
+        },
+        {
+          "cat": "Architecture & analysis",
+          "prompts": 8,
+          "switchboard": 0.271868,
+          "opus": 0.298964,
+          "saved": 0.09063298591134716
+        },
+        {
+          "cat": "Multi-step projects",
+          "prompts": 10,
+          "switchboard": 0.5046446,
+          "opus": 0.58926,
+          "saved": 0.14359603570580048
+        }
+      ]
+    },
+    {
+      "mode": "quality",
+      "escalationScenario": false,
+      "prompts": 60,
+      "steps": 81,
+      "switchboardCost": 2.1148639999999994,
+      "opusCost": 1.7767039999999998,
+      "saved": -0.19032995929541419,
+      "switchboardTokens": 267213,
+      "opusTokens": 102136,
+      "modelShare": {
+        "haiku": 0.2222222222222222,
+        "sonnet": 0.2839506172839506,
+        "opus": 0.3950617283950617,
+        "fable": 0.09876543209876543
+      },
+      "escalations": 0,
+      "cheaperOn": 25,
+      "routingAgreement": {
+        "matched": 21,
+        "of": 50
+      },
+      "categories": [
+        {
+          "cat": "Quick question",
+          "prompts": 12,
+          "switchboard": 0.017270399999999998,
+          "opus": 0.06526000000000001,
+          "saved": 0.7353600980692615
+        },
+        {
+          "cat": "Rewrite & light writing",
+          "prompts": 10,
+          "switchboard": 0.051945399999999996,
+          "opus": 0.11087599999999999,
+          "saved": 0.5315000541145063
+        },
+        {
+          "cat": "Everyday coding",
+          "prompts": 12,
+          "switchboard": 0.4482387,
+          "opus": 0.3851,
+          "saved": -0.16395403791223062
+        },
+        {
+          "cat": "Debugging",
+          "prompts": 8,
+          "switchboard": 0.5253821,
+          "opus": 0.327244,
+          "saved": -0.6054751194827102
+        },
+        {
+          "cat": "Architecture & analysis",
+          "prompts": 8,
+          "switchboard": 0.351502,
+          "opus": 0.298964,
+          "saved": -0.17573353313442408
+        },
+        {
+          "cat": "Multi-step projects",
+          "prompts": 10,
+          "switchboard": 0.7205254,
+          "opus": 0.58926,
+          "saved": -0.22276312663340447
+        }
+      ]
+    }
+  ],
+  "withEscalations": {
+    "mode": "balanced",
+    "escalationScenario": true,
+    "prompts": 60,
+    "steps": 81,
+    "switchboardCost": 1.7506313,
+    "opusCost": 1.7767039999999998,
+    "saved": 0.014674757303411168,
+    "switchboardTokens": 307553,
+    "opusTokens": 102136,
+    "modelShare": {
+      "haiku": 0.41975308641975306,
+      "sonnet": 0.24691358024691357,
+      "opus": 0.2962962962962963,
+      "fable": 0.037037037037037035
+    },
+    "escalations": 8,
+    "cheaperOn": 40,
+    "routingAgreement": {
+      "matched": 46,
+      "of": 50
+    },
+    "categories": [
+      {
+        "cat": "Quick question",
+        "prompts": 12,
+        "switchboard": 0.0016315000000000001,
+        "opus": 0.06526000000000001,
+        "saved": 0.975
+      },
+      {
+        "cat": "Rewrite & light writing",
+        "prompts": 10,
+        "switchboard": 0.020357899999999998,
+        "opus": 0.11087599999999999,
+        "saved": 0.8163903820484144
+      },
+      {
+        "cat": "Everyday coding",
+        "prompts": 12,
+        "switchboard": 0.3559807,
+        "opus": 0.3851,
+        "saved": 0.0756149052194236
+      },
+      {
+        "cat": "Debugging",
+        "prompts": 8,
+        "switchboard": 0.3954229,
+        "opus": 0.327244,
+        "saved": -0.20834270452628645
+      },
+      {
+        "cat": "Architecture & analysis",
+        "prompts": 8,
+        "switchboard": 0.35879269999999996,
+        "opus": 0.298964,
+        "saved": -0.20012008134758674
+      },
+      {
+        "cat": "Multi-step projects",
+        "prompts": 10,
+        "switchboard": 0.6184455999999999,
+        "opus": 0.58926,
+        "saved": -0.049529240063808766
+      }
+    ]
+  }
+}

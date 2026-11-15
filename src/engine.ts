@@ -30,10 +30,11 @@ export interface RunOptions {
   budgetUsd: number;          // hard cap for the whole run
   maxEscalations: number;     // per step
   checkThreshold: number;     // checker score needed to pass (0..1)
+  compose: "stitch" | "merge"; // stitch = join step outputs (free); merge = Sonnet rewrites them
   onEvent: (e: TraceEvent) => void;
 }
 
-export const DEFAULTS: Omit<RunOptions, "onEvent"> = { mode: "balanced", budgetUsd: 0.5, maxEscalations: 2, checkThreshold: 0.7 };
+export const DEFAULTS: Omit<RunOptions, "onEvent"> = { mode: "balanced", budgetUsd: 0.5, maxEscalations: 2, checkThreshold: 0.7, compose: "stitch" };
 
 // ---------- Schemas for the structured calls ----------
 const TriageSchema = z.object({
@@ -61,7 +62,7 @@ const CheckSchema = z.object({
 // ---------- The engine ----------
 export class Switchboard {
   private spent = 0;
-  private opusEquivalent = 0;
+  private workOutputTokens = 0;
   private calls = 0;
 
   constructor(private llm: LLM, private opts: RunOptions) {}
@@ -71,7 +72,6 @@ export class Switchboard {
   private track(step: number, model: ModelKey, role: CallRole, inputTokens: number, outputTokens: number) {
     const cost = estimateCost(MODELS[model], inputTokens, outputTokens);
     this.spent += cost;
-    this.opusEquivalent += estimateCost(MODELS.opus, inputTokens, outputTokens);
     this.calls++;
     this.emit({ type: "call", step, model, role, cost, inputTokens, outputTokens });
   }
@@ -154,6 +154,7 @@ export class Switchboard {
         let feedback = "";
         let attempts = 0;
         let output = "";
+        let lastOut = 0;
 
         while (true) {
           attempts++;
@@ -167,6 +168,7 @@ export class Switchboard {
           const res = await this.callWithFallback(n, model, prompt, steps.length === 1);
           model = res.model;
           output = res.text;
+          lastOut = res.outputTokens;
 
           // 4. Check the step with Haiku. Skip on trivial single steps.
           if (steps.length === 1 && s.difficulty <= 1.5) break;
@@ -205,24 +207,31 @@ export class Switchboard {
           this.emit({ type: "relax", step: n, message: "two clean passes in a row, so later steps can use cheaper models again" });
         }
         outputs.push(output);
+        this.workOutputTokens += lastOut;
         prev = model;
         this.emit({ type: "step-done", step: n, model, attempts, output });
       }
 
-      // 6. Compose. One step: its output is the answer. Several: Sonnet merges them.
+      // 6. Compose. One step: its output is the answer. Several: stitch them together for
+      //    free by default, or (compose: "merge") have Sonnet rewrite them into one answer.
       let final = outputs[outputs.length - 1] ?? "";
       if (steps.length > 1) {
-        const composer: ModelKey = "sonnet";
-        this.emit({ type: "compose", step: steps.length + 1, model: composer });
-        if (prev && prev !== composer) {
-          this.emit({ type: "switch", step: steps.length + 1, from: prev, to: composer, direction: rung(composer) > rung(prev) ? "up" : "down", reason: "Sonnet merges the finished steps into one answer" });
+        final = outputs.map((o, j) => `## ${steps[j].title}\n\n${o.trim()}`).join("\n\n");
+        if (this.opts.compose === "merge") {
+          const composer: ModelKey = "sonnet";
+          this.emit({ type: "compose", step: steps.length + 1, model: composer });
+          if (prev && prev !== composer) {
+            this.emit({ type: "switch", step: steps.length + 1, from: prev, to: composer, direction: rung(composer) > rung(prev) ? "up" : "down", reason: "Sonnet merges the finished steps into one answer" });
+          }
+          const prompt = `Overall task:\n<task>\n${task}\n</task>\n\nFinished steps:\n${outputs.map((o, j) => `<step_${j + 1} title="${steps[j].title}">\n${truncate(o, 8000)}\n</step_${j + 1}>`).join("\n")}\n\nWrite the final answer for the user. Keep every correct detail from the steps, remove repetition, and do not mention the steps or the pipeline.`;
+          const res = await this.callWithFallback(steps.length + 1, composer, prompt, true, "compose");
+          final = res.text;
         }
-        const prompt = `Overall task:\n<task>\n${task}\n</task>\n\nFinished steps:\n${outputs.map((o, j) => `<step_${j + 1} title="${steps[j].title}">\n${truncate(o, 8000)}\n</step_${j + 1}>`).join("\n")}\n\nWrite the final answer for the user. Keep every correct detail from the steps, remove repetition, and do not mention the steps or the pipeline.`;
-        const res = await this.callWithFallback(steps.length + 1, composer, prompt, true, "compose");
-        final = res.text;
       }
 
-      this.emit({ type: "final", text: final, totalCost: this.spent, opusCost: this.opusEquivalent, calls: this.calls });
+      // Baseline: what one Opus call writing the same answer would cost.
+      const baseline = estimateCost(MODELS.opus, estimateTokens(task) + 250, this.workOutputTokens);
+      this.emit({ type: "final", text: final, totalCost: this.spent, opusCost: baseline, calls: this.calls });
       return final;
     } catch (err) {
       this.emit({ type: "error", message: (err as Error).message ?? String(err) });
@@ -277,7 +286,8 @@ export function dryRun(task: string, mode: Mode) {
 function splitTask(task: string): string[] {
   const items = ("\n" + task).split(/\n\s*(?:\d+[.)]|[-*])\s+/).map((s) => s.trim()).filter(Boolean);
   if (items.length >= 2) return items.slice(0, 6);
-  const thens = task.split(/\b(?:and then|then|after that|finally)\b/i).map((s) => s.trim().replace(/^[,;]\s*/, "")).filter((s) => s.length > 12);
+  if (task.includes("```")) return [task];
+  const thens = task.split(/(?:,|\s)(?:and then|then|after that|finally)\s/i).map((s) => s.trim().replace(/^[,;]\s*/, "")).filter((s) => s.length > 12);
   return thens.length >= 2 ? thens.slice(0, 6) : [task];
 }
 
