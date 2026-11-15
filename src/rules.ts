@@ -8,19 +8,19 @@ export interface RuleResult {
   signals: string[];      // human-readable reasons
 }
 
-interface Rule { re: RegExp; delta: number; kind?: TaskKind; label: string }
+interface Rule { re: RegExp; delta: number; kind?: TaskKind; label: string; maxWords?: number }
 
 const RULES: Rule[] = [
   { re: /\b(quick|quickly|briefly|one[- ]word|tl;?dr|short answer|yes or no)\b/i, delta: -1.5, kind: "chat", label: "asks for a quick answer" },
   { re: /\b(fix (the )?(typo|grammar|spelling)|rephrase|rewrite|reword|proofread|translate|summari[sz]e)\b/i, delta: -0.5, kind: "rewrite", label: "rewrite or summary task" },
-  { re: /^(hi|hey|hello|thanks|thank you|what is|what's|who is|when (is|was|did)|define)\b/i, delta: -1, kind: "chat", label: "simple question" },
-  { re: /```|\bfunction\b|\bclass\b|=>|\bdef\b|\bconst\b|\bimport\b|;\s*$/m, delta: 1, kind: "code", label: "contains code" },
+  { re: /^(hi|hey|hello|thanks|thank you|what is|what's|who is|when (is|was|did)|define)\b/i, delta: -1, kind: "chat", label: "simple question", maxWords: 12 },
+  { re: /```|=>|^\s*(def|class|function|const|import|return)\b|[;{]\s*$/m, delta: 1, kind: "code", label: "contains code" },
   { re: /\b(implement|build|refactor|code|script|regex|sql|api|endpoint|component|function|tests?)\b/i, delta: 0.75, kind: "code", label: "coding task" },
   { re: /\b(bug|debug|stack ?trace|error|exception|crash|race condition|memory leak|segfault|deadlock)\b/i, delta: 1.25, kind: "debug", label: "debugging" },
   { re: /\b(architect(ure)?|system design|design (a|the)|scal(e|able|ing)|distributed|microservices?|trade-?offs?|migration plan)\b/i, delta: 1.5, kind: "architecture", label: "architecture or system design" },
   { re: /\b(prove|proof|derive|theorem|optimi[sz]e|complexity|algorithm|big-?o)\b/i, delta: 1.25, kind: "math", label: "proof or algorithm" },
   { re: /\b(analy[sz]e|compare|evaluate|critique|research|pros and cons|strategy)\b/i, delta: 0.75, kind: "analysis", label: "analysis" },
-  { re: /\b(step[- ]by[- ]step|multi-?step|end[- ]to[- ]end|entire (codebase|repo|project)|whole (codebase|repo|app)|plan and (build|execute)|autonomous|agent)\b/i, delta: 1.75, kind: "agentic", label: "long multi-step work" },
+  { re: /\b(multi-?step|end[- ]to[- ]end|entire (codebase|repo|project)|whole (codebase|repo|app)|plan and (build|execute)|autonomous|agent)\b/i, delta: 1.75, kind: "agentic", label: "long multi-step work" },
   { re: /\b(readme|docs|documentation|changelog|commit message|docstring|short (section|note|summary|paragraph))\b/i, delta: -1.25, kind: "rewrite", label: "short docs or prose" },
   { re: /\b(poem|story|joke|caption|tweet|slogan|name ideas?)\b/i, delta: -0.5, kind: "creative", label: "light creative writing" },
   { re: /\b(carefully|rigorous(ly)?|production|critical|security|edge cases?)\b/i, delta: 0.75, label: "asks for rigor" },
@@ -32,8 +32,10 @@ export function scoreWithRules(prompt: string): RuleResult {
   const signals: string[] = [];
   const kindVotes = new Map<TaskKind, number>();
   let hits = 0;
+  const words = text.split(/\s+/).filter(Boolean).length;
 
   for (const r of RULES) {
+    if (r.maxWords && words > r.maxWords) continue;
     if (r.re.test(text)) {
       level += r.delta;
       hits++;
@@ -43,7 +45,6 @@ export function scoreWithRules(prompt: string): RuleResult {
   }
 
   // Length: long prompts usually carry more context and harder asks.
-  const words = text.split(/\s+/).filter(Boolean).length;
   if (words <= 8) { level -= 0.75; signals.push(`very short (${words} words)`); }
   else if (words > 400) { level += 1.25; signals.push(`long prompt (${words} words)`); }
   else if (words > 120) { level += 0.5; signals.push(`detailed prompt (${words} words)`); }

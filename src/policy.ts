@@ -5,7 +5,7 @@ export type Mode = "save" | "balanced" | "quality";
 // Upper difficulty bound for each rung. Above the last bound -> Fable.
 const THRESHOLDS: Record<Mode, [number, number, number]> = {
   save:     [2.0, 3.7, 4.7],
-  balanced: [1.5, 3.0, 4.2],
+  balanced: [1.5, 3.0, 4.7],
   quality:  [1.0, 2.3, 3.6],
 };
 

@@ -53,7 +53,7 @@
     <section id="results" class="results hidden">
       <div class="stats">
         <div class="stat"><span class="k" id="spentLabel">Spent</span><span class="v" id="spent">$0.0000</span></div>
-        <div class="stat"><span class="k">Same tokens at Opus prices</span><span class="v" id="opus">$0.0000</span></div>
+        <div class="stat"><span class="k">One Opus call (est.)</span><span class="v" id="opus">$0.0000</span></div>
         <div class="stat"><span class="k">Saved</span><span class="v good" id="saved">0%</span></div>
         <div class="stat"><span class="k">Model switches</span><span class="v" id="switches">0</span></div>
       </div>
@@ -75,6 +75,27 @@
       </div>
     </section>
 
+    <section class="bench" id="bench">
+      <div class="benchhead">
+        <h2>Benchmark</h2>
+        <span class="tag">Simulated · no API calls</span>
+      </div>
+      <p class="muted" id="benchIntro"></p>
+      <div class="stats" id="benchStats"></div>
+      <div class="grid2">
+        <div class="card">
+          <div class="cardhead"><h2>Cost by kind of prompt</h2><span class="muted">Switchboard vs one Opus call</span></div>
+          <div id="benchCats" class="bars"></div>
+        </div>
+        <div class="card">
+          <div class="cardhead"><h2>By routing mode</h2></div>
+          <table class="modes" id="benchModes"></table>
+          <p class="muted small" id="benchEsc"></p>
+        </div>
+      </div>
+      <p class="muted small">How it's measured: 60 prompts in 6 categories (<a href="https://github.com/mridulsharma2002/switchboard/blob/main/bench/prompts.json" target="_blank" rel="noopener">bench/prompts.json</a>). Switchboard's free rules route every step. Token counts come from a cost model, not real responses. The baseline is one Opus 5.5 call writing the same amount of output. Switchboard's side includes the triage, planning and check calls. Thinking tokens aren't counted on either side. Reproduce it with <code>npm run bench</code>.</p>
+    </section>
+
     <section class="how">
       <h2>How it works</h2>
       <div class="flow">
@@ -86,7 +107,7 @@
         <div class="arrow">→</div>
         <div class="node"><b>Check</b><span>Haiku grades the step. Fail → move up a model and retry.</span></div>
         <div class="arrow">→</div>
-        <div class="node"><b>Compose</b><span>Sonnet merges the steps into one answer.</span></div>
+        <div class="node"><b>Compose</b><span>Finished steps are stitched into one answer, with no extra call.</span></div>
       </div>
 <pre class="code"><code>for step in plan(task):
     model = cheapest_model_for(step.difficulty)

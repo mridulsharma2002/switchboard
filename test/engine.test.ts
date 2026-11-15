@@ -51,7 +51,7 @@ describe("engine", () => {
     { title: "Write README", instruction: "b", difficulty: 1, kind: "rewrite" },
   ] };
 
-  it("switches down for a simple step and composes on Sonnet", async () => {
+  it("switches down for a simple step and stitches the answer", async () => {
     const e = await run(fake({ plan }), "Design a distributed job queue with retries and the worker. Then ship it.\n1. design\n2. client");
     const switches = e.filter((x) => x.type === "switch");
     expect(switches[0]).toMatchObject({ from: "opus", to: "haiku", direction: "down" });
