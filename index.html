@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Switchboard</title>
+  <meta name="description" content="A router that picks the right Claude model for every step of a task and switches mid-task when the work gets harder or easier." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M6 22h6l4-12h4l6 0' stroke='%2334d399' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="wrap top">
+    <a class="brand" href="./"><span class="logo"></span>Switchboard</a>
+    <a class="gh" href="https://github.com/mridulsharma2002/switchboard" target="_blank" rel="noopener">Source</a>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>The right Claude model for every step.</h1>
+      <p class="lead">Switchboard plans your task, sends each step to the cheapest model that can do it well, checks the work, and switches models mid-task: up when a check fails, back down when the work gets easy.</p>
+    </section>
+
+    <section class="card composer">
+      <label for="prompt" class="label">Your task</label>
+      <textarea id="prompt" rows="6" placeholder="Paste a prompt or a multi-step task…"></textarea>
+      <div class="examples" id="examples"></div>
+
+      <div class="controls">
+        <div class="seg" role="radiogroup" aria-label="Routing mode" id="mode">
+          <button data-mode="save" role="radio">Save money</button>
+          <button data-mode="balanced" role="radio" class="on">Balanced</button>
+          <button data-mode="quality" role="radio">Best quality</button>
+        </div>
+        <label class="budget">Budget cap <span>$</span><input id="budget" type="number" min="0.01" step="0.05" value="0.50" /></label>
+      </div>
+
+      <details class="key" id="keybox">
+        <summary>Run it live with your own API key</summary>
+        <p class="muted">Your key stays in this browser and is sent only to api.anthropic.com. Without a key you can still preview the routing for free.</p>
+        <div class="keyrow">
+          <input id="apikey" type="password" autocomplete="off" placeholder="sk-ant-…" />
+          <label class="remember"><input type="checkbox" id="remember" /> Remember on this device</label>
+        </div>
+      </details>
+
+      <div class="actions">
+        <button id="preview" class="btn ghost">Preview routing</button>
+        <button id="runlive" class="btn primary">Run live</button>
+      </div>
+    </section>
+
+    <section id="results" class="results hidden">
+      <div class="stats">
+        <div class="stat"><span class="k">Spent</span><span class="v" id="spent">$0.0000</span></div>
+        <div class="stat"><span class="k">Same tokens at Opus prices</span><span class="v" id="opus">$0.0000</span></div>
+        <div class="stat"><span class="k">Saved</span><span class="v good" id="saved">0%</span></div>
+        <div class="stat"><span class="k">Model switches</span><span class="v" id="switches">0</span></div>
+      </div>
+
+      <div class="card">
+        <div class="cardhead"><h2>Route</h2><span class="muted" id="routeNote"></span></div>
+        <div id="lanes" class="lanes"></div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="cardhead"><h2>Timeline</h2></div>
+          <ol id="timeline" class="timeline"></ol>
+        </div>
+        <div class="card">
+          <div class="cardhead"><h2>Answer</h2><button id="copy" class="btn tiny ghost">Copy</button></div>
+          <div id="answer" class="answer muted">Run it live to see the answer here.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="how">
+      <h2>How it works</h2>
+      <div class="flow">
+        <div class="node"><b>Triage</b><span>Free rules score the prompt. Haiku breaks ties.</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><b>Plan</b><span>Big tasks get split into steps, each with its own difficulty.</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><b>Route</b><span>Each step goes to the cheapest model for its difficulty.</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><b>Check</b><span>Haiku grades the step. Fail → move up a model and retry.</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><b>Compose</b><span>Sonnet merges the steps into one answer.</span></div>
+      </div>
+<pre class="code"><code>for step in plan(task):
+    model = cheapest_model_for(step.difficulty)
+    loop:
+        out = run(model, step)          # busy or refused → next model
+        if check(out).passes: break
+        if over_budget or at_top: break
+        model = one_level_up(model)     # escalate and retry
+    after 2 clean passes: drop back down</code></pre>
+      <div class="ladder" id="ladder"></div>
+    </section>
+  </main>
+
+  <footer class="wrap foot">Built in public by <a href="https://www.linkedin.com/in/mridulmerges" target="_blank" rel="noopener">Mridul Sharma</a> · Tech, explained simply</footer>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

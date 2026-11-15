@@ -1,0 +1,22 @@
+{
+  "name": "switchboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Routes every step of a task to the right Claude model, and switches mid-task.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p . && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}
