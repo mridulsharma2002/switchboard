@@ -2,7 +2,7 @@
 
 **The right Claude model for every step.** Switchboard plans a task, sends each step to the cheapest Claude model that can do it well, checks the work, and switches models mid-task: up when a check fails, back down when the work gets easy.
 
-Built in public by [Mridul Sharma](https://www.linkedin.com/in/mridulmerges).
+**Try it:** [switchboard.mridulmerges.ca](https://switchboard.mridulmerges.ca) · Built in public by [Mridul Sharma](https://www.linkedin.com/in/mridulmerges).
 
 ## How it works
 
