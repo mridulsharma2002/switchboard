@@ -3,180 +3,128 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Switchboard · the right Claude model for every step</title>
-  <meta name="description" content="Switchboard plans a task, patches each step to the cheapest Claude model that can do it well, checks the work and re-patches mid-task." />
+  <title>Switchboard</title>
+  <meta name="description" content="Switchboard sends each step of a task to the cheapest Claude model that can do it well, checks the work, and moves up a model when a check fails." />
   <meta name="color-scheme" content="light dark" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0c'/%3E%3Ccircle cx='9' cy='9' r='3' fill='%23ffb547'/%3E%3Ccircle cx='23' cy='23' r='3' fill='none' stroke='%23f5f5f7' stroke-width='2'/%3E%3Cpath d='M9 9 C9 18 23 14 23 23' stroke='%23ffb547' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111'/%3E%3Ccircle cx='9' cy='9' r='3' fill='%23ffb547'/%3E%3Ccircle cx='23' cy='23' r='3' fill='none' stroke='%23fff' stroke-width='2'/%3E%3Cpath d='M9 9 C9 18 23 14 23 23' stroke='%23ffb547' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 </head>
 <body>
-  <header class="bar">
-    <div class="wrap bar-in">
-      <a class="brand" href="./" aria-label="Switchboard home">
-        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8"/><circle class="j1" cx="9" cy="9" r="3"/><circle class="j2" cx="23" cy="23" r="3"/><path d="M9 9 C9 18 23 14 23 23"/></svg>
-        <span>Switchboard</span>
-      </a>
-      <nav class="nav">
-        <a href="#try">Try it</a>
-        <a href="#bench">Results</a>
-        <a href="#how">How it works</a>
-        <a class="gh" href="https://github.com/mridulsharma2002/switchboard" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-          <span>Code</span>
-        </a>
-      </nav>
-    </div>
-  </header>
+  <main class="col">
+    <nav class="top">
+      <a class="back" href="https://mridulmerges.ca">← mridulmerges.ca</a>
+      <a class="back" href="https://github.com/mridulsharma2002/switchboard" target="_blank" rel="noopener">Code ↗</a>
+    </nav>
 
-  <main>
-    <!-- HERO -->
-    <section class="hero wrap">
-      <p class="eyebrow">Mini project 01 · Built in public</p>
-      <h1 class="display">Every step, patched to the right model.<span>Cheap where it can be. Smart where it counts.</span></h1>
-      <p class="lead">Switchboard splits a task into steps, sends each one to the cheapest Claude model that can do it well, checks the work, and re-patches mid-task: up a model when a check fails, back down when the work gets easy.</p>
-      <div class="cta">
-        <a class="btn ink" href="#try">Try it free</a>
-        <a class="btn soft" href="https://github.com/mridulsharma2002/switchboard" target="_blank" rel="noopener">Read the code</a>
+    <header class="intro">
+      <div class="who">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9"/><circle class="j1" cx="9" cy="9" r="3"/><circle class="j2" cx="23" cy="23" r="3"/><path d="M9 9 C9 18 23 14 23 23"/></svg>
+        <div>
+          <h1>Switchboard</h1>
+          <p class="sub">Side project No. 1 · by Mridul Sharma</p>
+        </div>
+      </div>
+      <p>Most AI tasks mix hard parts and easy parts. Switchboard splits a task into steps and sends each one to the cheapest Claude model that can do it well. A small model checks every step. If a check fails, the step moves up a model and tries again.</p>
+    </header>
+
+    <figure class="stage" aria-label="Demo: a four-step task being routed between models">
+      <div class="stage-top">
+        <span><i class="dot live"></i>Demo run</span>
+        <span class="dim" id="heroStatus">Patching step 1</span>
+      </div>
+      <div id="heroBoard" class="board"></div>
+      <ol class="ticker" id="heroTicker" aria-live="off"></ol>
+    </figure>
+    <p class="caption">Scripted replies. Step 2 fails its check on Sonnet and moves up to Opus. The README drops down to Haiku.</p>
+
+    <section id="try">
+      <h2>Try it</h2>
+      <p class="muted">Preview the routing for free, or run it live with your own API key.</p>
+
+      <div class="field">
+        <label for="prompt" class="sr">Your task</label>
+        <textarea id="prompt" rows="6" placeholder="Paste a prompt or a multi-step task…"></textarea>
+        <div class="examples" id="examples" role="group" aria-label="Examples"></div>
       </div>
 
-      <figure class="stage hero-stage" aria-label="Demo: a four-step task being routed between models">
-        <div class="stage-top">
-          <span class="label"><i class="dot live"></i>Operator view</span>
-          <span class="label dim" id="heroStatus">Patching step 1</span>
+      <div class="controls">
+        <div class="seg" role="radiogroup" aria-label="Routing mode" id="mode">
+          <button data-mode="save" role="radio" aria-checked="false">Save money</button>
+          <button data-mode="balanced" role="radio" aria-checked="true" class="on">Balanced</button>
+          <button data-mode="quality" role="radio" aria-checked="false">Best quality</button>
+          <span class="seg-thumb" aria-hidden="true"></span>
         </div>
-        <div id="heroBoard" class="board"></div>
-        <ol class="ticker" id="heroTicker" aria-live="off"></ol>
-        <figcaption class="label dim">Demo loop with scripted replies. Step 2 fails its check and moves up to Opus.</figcaption>
-      </figure>
+        <label class="budget">Budget cap <span class="money">$<input id="budget" type="number" min="0.01" step="0.05" value="0.50" inputmode="decimal" /></span></label>
+      </div>
 
-      <dl class="proof">
-        <div><dt>Quick questions</dt><dd data-count="-98" data-suffix="%">−98%</dd></div>
-        <div><dt>All 60 prompts</dt><dd data-count="-19" data-suffix="%">−19%</dd></div>
-        <div><dt>Cheaper on</dt><dd>46<small>/60</small></dd></div>
-      </dl>
-      <p class="fine">Cost vs one Claude Opus 5.5 call. <a href="#bench">Simulated benchmark</a>, balanced mode.</p>
-    </section>
+      <details class="key" id="keybox">
+        <summary>Use your own API key<span class="chev" aria-hidden="true">+</span></summary>
+        <p class="muted small">Your key stays in this browser and goes only to api.anthropic.com. There's no server in between.</p>
+        <div class="keyrow">
+          <input id="apikey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" aria-label="Anthropic API key" />
+          <label class="remember"><input type="checkbox" id="remember" /> Remember on this device</label>
+        </div>
+      </details>
 
-    <!-- TRY -->
-    <section class="band" id="try">
-      <div class="wrap">
-        <header class="sec-head reveal">
-          <p class="eyebrow">01 · Try it</p>
-          <h2 class="section">Hand it a task.<span>Watch the cords move.</span></h2>
-        </header>
+      <div class="actions">
+        <button id="preview" class="btn">Preview routing</button>
+        <button id="runlive" class="btn ink">Run live</button>
+      </div>
 
-        <div class="console reveal">
-          <div class="composer">
-            <label for="prompt" class="label">Your task</label>
-            <textarea id="prompt" rows="6" placeholder="Paste a prompt or a multi-step task…"></textarea>
-            <div class="examples" id="examples" role="group" aria-label="Examples"></div>
-
-            <div class="controls">
-              <div class="seg" role="radiogroup" aria-label="Routing mode" id="mode">
-                <button data-mode="save" role="radio" aria-checked="false">Save money</button>
-                <button data-mode="balanced" role="radio" aria-checked="true" class="on">Balanced</button>
-                <button data-mode="quality" role="radio" aria-checked="false">Best quality</button>
-                <span class="seg-thumb" aria-hidden="true"></span>
-              </div>
-              <label class="budget"><span class="label">Budget cap</span><span class="money">$<input id="budget" type="number" min="0.01" step="0.05" value="0.50" inputmode="decimal" /></span></label>
-            </div>
-
-            <details class="key" id="keybox">
-              <summary><span>Run it live with your own API key</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></summary>
-              <p class="muted small">Your key stays in this browser and goes only to api.anthropic.com. There's no server. Without a key, previewing the routing is free.</p>
-              <div class="keyrow">
-                <input id="apikey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" aria-label="Anthropic API key" />
-                <label class="remember"><input type="checkbox" id="remember" /> Remember on this device</label>
-              </div>
-            </details>
-
-            <div class="actions">
-              <button id="preview" class="btn soft">Preview routing</button>
-              <button id="runlive" class="btn ink">Run live</button>
-            </div>
+      <div id="results" class="results">
+        <dl class="meters">
+          <div><dt id="spentLabel">Estimated cost</dt><dd id="spent">$0.000</dd></div>
+          <div><dt>One Opus call</dt><dd id="opus">$0.000</dd></div>
+          <div><dt>Difference</dt><dd id="saved">0%</dd></div>
+          <div><dt>Model changes</dt><dd id="switches">0</dd></div>
+        </dl>
+        <div class="stage">
+          <div class="stage-top">
+            <span><i class="dot" id="runDot"></i>Route</span>
+            <span class="dim" id="routeNote"></span>
           </div>
-
-          <div id="results" class="results">
-            <div class="meters">
-              <div class="meter"><span class="label" id="spentLabel">Estimated cost</span><b id="spent">$0.000</b></div>
-              <div class="meter"><span class="label">One Opus call</span><b id="opus">$0.000</b></div>
-              <div class="meter"><span class="label">Difference</span><b id="saved">0%</b></div>
-              <div class="meter"><span class="label">Re-patches</span><b id="switches">0</b></div>
-            </div>
-            <div class="stage">
-              <div class="stage-top">
-                <span class="label"><i class="dot" id="runDot"></i>Route</span>
-                <span class="label dim" id="routeNote"></span>
-              </div>
-              <div id="board" class="board"></div>
-              <div class="logwrap">
-                <span class="label dim">Operator log</span>
-                <ol id="timeline" class="oplog"></ol>
-              </div>
-            </div>
-            <div class="answer-card">
-              <div class="answer-head"><span class="label">Answer</span><button id="copy" class="btn tiny soft">Copy</button></div>
-              <div id="answer" class="answer muted">Run it live to see the answer here.</div>
-            </div>
-          </div>
+          <div id="board" class="board"></div>
+          <ol id="timeline" class="oplog"></ol>
+        </div>
+        <div class="answer-card">
+          <div class="answer-head"><span>Answer</span><button id="copy" class="btn tiny">Copy</button></div>
+          <div id="answer" class="answer muted">Run it live to see the answer here.</div>
         </div>
       </div>
     </section>
 
-    <!-- BENCHMARK -->
-    <section class="band alt" id="bench">
-      <div class="wrap">
-        <header class="sec-head reveal">
-          <p class="eyebrow">02 · Results</p>
-          <h2 class="section">Where it saves.<span>And where it doesn't.</span></h2>
-          <p class="lead" id="benchIntro"></p>
-          <p class="sim"><i></i>Simulated. No API calls: real routing, modelled token counts.</p>
-        </header>
+    <section id="bench">
+      <h2>Results</h2>
+      <p id="benchIntro"></p>
+      <p class="note">Simulated. The routing is real, but token counts come from a cost model, not real API calls.</p>
 
-        <div class="bignums reveal" id="benchStats"></div>
+      <div class="list" id="benchStats"></div>
 
-        <div class="panel reveal">
-          <div class="panel-head">
-            <h3>Cost by kind of prompt</h3>
-            <div class="legend"><span><i class="lg-opus"></i>One Opus call = 100</span><span><i class="lg-sb"></i>Switchboard</span></div>
-          </div>
-          <div id="benchCats" class="dumbbells"></div>
-          <div class="axis" aria-hidden="true"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span><span>125</span></div>
-        </div>
+      <h3>By kind of prompt</h3>
+      <p class="muted small">One Opus call is 100. The dot is what Switchboard costs for the same work.</p>
+      <div class="list pad" id="benchCats"></div>
+      <div class="axis" aria-hidden="true"><span>0</span><span>50</span><span>100</span></div>
 
-        <div class="modes reveal" id="benchModes"></div>
+      <h3>By mode</h3>
+      <div class="list" id="benchModes"></div>
+      <div class="mixkey" aria-hidden="true"><span><i class="haiku"></i>Haiku</span><span><i class="sonnet"></i>Sonnet</span><span><i class="opus"></i>Opus</span><span><i class="fable"></i>Fable</span></div>
 
-        <aside class="catch reveal">
-          <span class="label">The catch</span>
-          <p id="benchEsc"></p>
-        </aside>
-
-        <p class="fine method">How it's measured: 60 prompts in 6 categories (<a href="https://github.com/mridulsharma2002/switchboard/blob/main/bench/prompts.json" target="_blank" rel="noopener">bench/prompts.json</a>). Switchboard's free rules route every step. Token counts come from a cost model, not real responses. The baseline is one Opus 5.5 call writing the same amount of output. Switchboard's side includes the triage, planning and check calls. Thinking tokens aren't counted on either side. Reproduce it with <code>npm run bench</code>.</p>
-      </div>
+      <p id="benchEsc"></p>
+      <p class="muted small">How it's measured: 60 prompts in 6 kinds (<a href="https://github.com/mridulsharma2002/switchboard/blob/main/bench/prompts.json" target="_blank" rel="noopener">bench/prompts.json</a>). Switchboard's free rules route every step, and a cost model estimates the tokens. The baseline is one Opus 5.5 call writing the same amount of output. Switchboard's side includes the triage, planning and check calls. Thinking tokens aren't counted on either side. Run <code>npm run bench</code> to reproduce it.</p>
     </section>
 
-    <!-- HOW -->
-    <section class="band dark" id="how">
-      <div class="wrap">
-        <header class="sec-head reveal">
-          <p class="eyebrow">03 · How it works</p>
-          <h2 class="section">An operator for your prompts.<span>Five moves, every run.</span></h2>
-        </header>
-
-        <ol class="moves reveal" id="moves">
-          <li><b>Triage</b><span>Free rules score the task from 1 to 5. Haiku breaks ties.</span></li>
-          <li><b>Plan</b><span>Big tasks split into 2 to 5 steps, each with its own difficulty.</span></li>
-          <li><b>Patch</b><span>Each step goes to the cheapest model for its difficulty.</span></li>
-          <li><b>Check</b><span>Haiku grades the step. A fail moves it up one model and retries.</span></li>
-          <li><b>Compose</b><span>Finished steps are stitched into one answer. No extra call.</span></li>
-        </ol>
-
-        <div class="how-grid">
-          <div class="term reveal">
-            <div class="term-top"><i></i><i></i><i></i><span>route.py</span></div>
-<pre><code><span class="k">for</span> step <span class="k">in</span> plan(task):
+    <section id="how">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li><b>Triage.</b> Free rules score the task from 1 to 5. If they aren't sure, Haiku decides.</li>
+        <li><b>Plan.</b> A bigger task is split into 2 to 5 steps, each with its own difficulty.</li>
+        <li><b>Route.</b> Each step goes to the cheapest model for its difficulty.</li>
+        <li><b>Check.</b> Haiku grades the step. A fail moves it up one model, and it tries again with the reviewer's note.</li>
+        <li><b>Compose.</b> The finished steps are joined into one answer, with no extra call.</li>
+      </ol>
+<pre class="code"><code><span class="k">for</span> step <span class="k">in</span> plan(task):
     model = cheapest_model_for(step.difficulty)
     <span class="k">loop</span>:
         out = run(model, step)        <span class="c"># busy or refused → next model</span>
@@ -184,19 +132,16 @@
         <span class="k">if</span> over_budget <span class="k">or</span> at_top: <span class="k">break</span>
         model = one_level_up(model)   <span class="c"># escalate and retry</span>
     <span class="c"># two clean passes in a row: drop back down</span></code></pre>
-          </div>
-          <div class="ladder reveal" id="ladder"></div>
-        </div>
-      </div>
+      <h3>The models</h3>
+      <div class="list" id="ladder"></div>
+      <p class="muted small">USD per 1M tokens, input / output. Claude API list prices.</p>
     </section>
-  </main>
 
-  <footer class="foot">
-    <div class="wrap foot-in">
-      <span>Built in public by <a href="https://www.linkedin.com/in/mridulmerges" target="_blank" rel="noopener">Mridul Sharma</a> · Tech, explained simply</span>
-      <span class="dim">Not affiliated with Anthropic. MIT licensed.</span>
-    </div>
-  </footer>
+    <footer class="foot">
+      <p>Built in public by <a href="https://mridulmerges.ca">Mridul Sharma</a>. Not affiliated with Anthropic.</p>
+      <p class="muted">© 2026 · MIT licensed</p>
+    </footer>
+  </main>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
