@@ -12,11 +12,6 @@ const pct = (n: number) => `${Math.round(Math.abs(n) * 100)}%`;
 const signed = (saved: number) => `${saved >= 0 ? "−" : "+"}${pct(saved)}`;
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
 
-// ---------- top bar ----------
-const bar = document.querySelector(".bar")!;
-const onScroll = () => bar.classList.toggle("scrolled", scrollY > 8);
-addEventListener("scroll", onScroll, { passive: true }); onScroll();
-
 // ---------- hero: a scripted run on loop ----------
 const HERO_STEPS = ["Design the schema", "Write the endpoint", "Unit tests", "README section"];
 type Beat = { cord?: Cord; fail?: boolean; line: string; cls?: string; status: string; wait: number };
@@ -276,86 +271,53 @@ addEventListener("resize", () => { const w = $("board").clientWidth; if (Math.ab
 function renderBench() {
   const b = bench.runs.find((r) => r.mode === "balanced")!;
   const quick = b.categories.find((c) => c.cat.startsWith("Quick"))!;
-  $("benchIntro").textContent = `${b.prompts} realistic prompts in 6 kinds, from one-line questions to four-part builds. Each one is routed by Switchboard and priced against one Claude Opus 5.5 call writing the same amount.`;
-  const big = (label: string, value: string, note: string, count?: number, suffix = "") =>
-    `<div class="big"><span class="label">${label}</span><b${count !== undefined ? ` data-count="${count}" data-suffix="${suffix}"` : ""}>${value}</b><p>${note}</p></div>`;
+  const debug = b.categories.find((c) => c.cat.startsWith("Debug"))!;
+  $("benchIntro").textContent = `I ran ${b.prompts} realistic prompts through it, from one-line questions to four-part builds, and priced each one against a single Claude Opus 5.5 call doing the same work. In balanced mode:`;
+  const row = (l: string, sub: string, v: string, cls = "") => `<div class="row"><span class="l">${l}<small>${sub}</small></span><span class="v ${cls}">${v}</span></div>`;
   $("benchStats").innerHTML =
-    big("Overall, balanced", signed(b.saved), `${money(b.switchboardCost)} vs ${money(b.opusCost)} for all ${b.prompts}`, -Math.round(b.saved * 100), "%") +
-    big("Quick questions", signed(quick.saved), "Haiku is 1/40 of Opus per token", -Math.round(quick.saved * 100), "%") +
-    big("Cheaper on", `${b.cheaperOn}<small>/${b.prompts}</small>`, "prompts, in balanced mode") +
-    big("Tokens used", `${(b.switchboardTokens / b.opusTokens).toFixed(1)}×`, "more than one Opus call. They're cheaper tokens.");
+    row("Overall", `${money(b.switchboardCost)} vs ${money(b.opusCost)} for all ${b.prompts} prompts`, signed(b.saved), "pos") +
+    row("Quick questions", "They go to Haiku, at 1/40 of Opus's price", signed(quick.saved), "pos") +
+    row("Debugging", "Hard steps go to Opus anyway, plus the checks", signed(debug.saved), "neg") +
+    row("Cheaper than Opus", "Prompts where Switchboard cost less", `${b.cheaperOn} of ${b.prompts}`) +
+    row("Tokens used", "More tokens than one Opus call, but cheaper ones", `${(b.switchboardTokens / b.opusTokens).toFixed(1)}×`);
 
   // dumbbells: Opus = 100 on every row, Switchboard where its cost lands
-  const MAX = 125;
+  const MAX = 120;
   const at = (v: number) => `${(Math.min(v, MAX) / MAX) * 100}%`;
   $("benchCats").innerHTML = b.categories.map((c, i) => {
     const rel = (c.switchboard / c.opus) * 100;
     const over = rel > 100;
     const lo = Math.min(rel, 100), hi = Math.max(rel, 100);
-    return `<div class="db" style="--ref:${at(100)};--to:${at(rel)};--lo:${at(lo)};--w:calc(${at(hi)} - ${at(lo)});--delay:${i * 0.09}s">
-      <div class="db-name">${esc(c.cat)}<small>${c.prompts} prompts · ${money(c.switchboard)} vs ${money(c.opus)}</small></div>
-      <div class="db-track" role="img" aria-label="${esc(c.cat)}: Switchboard ${Math.round(rel)} vs Opus 100">
+    return `<div class="db" style="--ref:${at(100)};--to:${at(rel)};--lo:${at(lo)};--w:calc(${at(hi)} - ${at(lo)});--delay:${i * 0.08}s">
+      <div class="db-name">${esc(c.cat)}<small>${c.prompts} prompts</small></div>
+      <div class="db-val ${c.saved >= 0 ? "pos" : "neg"}">${signed(c.saved)}</div>
+      <div class="db-track" role="img" aria-label="${esc(c.cat)}: Switchboard ${Math.round(rel)}, one Opus call 100">
         <span class="db-bar${over ? " over" : ""}"></span><span class="db-dot o"></span><span class="db-dot s${over ? " over" : ""}"></span>
       </div>
-      <div class="db-val ${c.saved >= 0 ? "pos" : "neg"}">${signed(c.saved)}</div>
     </div>`;
   }).join("");
+  document.querySelector(".axis")!.innerHTML = [0, 25, 50, 75, 100].map((v) => `<span style="left:${at(v)}">${v}</span>`).join("");
 
-  // mode cards: a half-dial of cost vs Opus, then the model mix
-  const names: Record<string, [string, string]> = { save: ["Save money", "Cheapest that passes"], balanced: ["Balanced", "Default"], quality: ["Best quality", "Hard steps to Fable"] };
-  const ARC = Math.PI * 44; // half circle, r = 44
-  $("benchModes").innerHTML = bench.runs.map((r) => {
-    const rel = 1 - r.saved; // cost as a share of Opus
-    const len = (Math.min(rel, 1.5) / 1.5) * ARC;
-    const mark = (1 / 1.5) * Math.PI; // where 100% sits on the dial
-    const mx = 52 - 38 * Math.cos(mark), my = 54 - 38 * Math.sin(mark);
-    const mx2 = 52 - 52 * Math.cos(mark), my2 = 54 - 52 * Math.sin(mark);
-    return `<article class="mode-card${r.mode === "balanced" ? " pick" : ""}">
-      <div class="mode-top"><h4>${names[r.mode][0]}</h4><span class="label${r.mode === "balanced" ? " tagd" : ""}">${names[r.mode][1]}</span></div>
-      <div class="gauge">
-        <svg viewBox="0 0 104 60" aria-hidden="true">
-          <path class="g-bg" d="M8,54 A44,44 0 0 1 96,54"/>
-          <path class="g-fg${rel > 1 ? " over" : ""}" d="M8,54 A44,44 0 0 1 96,54" data-len="${len.toFixed(1)}"/>
-          <line class="g-mark" x1="${mx.toFixed(1)}" y1="${my.toFixed(1)}" x2="${mx2.toFixed(1)}" y2="${my2.toFixed(1)}"/>
-        </svg>
-        <div><b class="${r.saved >= 0 ? "pos" : "neg"}">${signed(r.saved)}</b><span>vs Opus · cheaper on ${r.cheaperOn}/${r.prompts}</span></div>
-      </div>
-      <div class="mix">${LADDER.map((k) => `<i class="${k}" style="--w:${r.modelShare[k] * 100}%" title="${MODELS[k].name} ${pct(r.modelShare[k])}"></i>`).join("")}</div>
-      <div class="mixkey">${LADDER.map((k) => `<span><b>${pct(r.modelShare[k])}</b>${MODELS[k].name.split(" ")[0]}</span>`).join("")}</div>
-    </article>`;
-  }).join("");
+  const names: Record<string, [string, string]> = { save: ["Save money", ""], balanced: ["Balanced", "default"], quality: ["Best quality", "hard steps go to Fable"] };
+  $("benchModes").innerHTML = bench.runs.map((r) => `<div class="mode">
+      <div class="row"><span class="l"><b>${names[r.mode][0]}</b>${names[r.mode][1] ? `<span class="tag">${names[r.mode][1]}</span>` : ""}<small>Cheaper on ${r.cheaperOn} of ${r.prompts} · ${LADDER.map((k) => `${MODELS[k].name.split(" ")[0]} ${pct(r.modelShare[k])}`).join(", ")}</small></span><span class="v ${r.saved >= 0 ? "pos" : "neg"}">${signed(r.saved)}</span></div>
+      <div class="mix" aria-hidden="true">${LADDER.map((k) => `<i class="${k}" style="--w:${r.modelShare[k] * 100}%"></i>`).join("")}</div>
+    </div>`).join("");
 
   const e = bench.withEscalations;
-  $("benchEsc").textContent = `Failed checks eat the savings. If about 1 in 7 checked steps fails and moves up a model (${e.escalations} escalations across the ${e.prompts} prompts), balanced mode lands at ${signed(e.saved)}: break-even. On hard work like debugging, routing barely helps, because those steps go to Opus anyway. Best quality costs more than Opus on purpose.`;
+  $("benchEsc").textContent = `The catch: failed checks eat the savings. If about 1 in 7 checked steps fails and moves up a model (${e.escalations} escalations across the ${e.prompts} prompts), balanced mode comes out at ${signed(e.saved)}, which is break-even. Switchboard pays off when a task mixes hard and easy parts. For one hard question, just ask Opus.`;
 }
 renderBench();
 
-// ladder in How it works
+// the models, in How it works
 const usd = (n: number) => `$${n < 1 ? n.toFixed(2) : n}`;
 $("ladder").innerHTML = [...LADDER].reverse().map((k) => {
   const m = MODELS[k];
   return `<div class="rung">${tierBars(k)}<b>${m.name}</b><span class="p">${usd(m.inputPrice)} / ${usd(m.outputPrice)}</span><span class="bl">${m.blurb}</span></div>`;
-}).join("") + `<div class="rung foot-rung"><span class="bl">USD per 1M tokens, input / output.</span></div>`;
+}).join("");
 
-// ---------- reveals and count-ups ----------
-function countUp(el: HTMLElement) {
-  const target = Number(el.dataset.count), suffix = el.dataset.suffix ?? "";
-  if (!Number.isFinite(target) || reduced) return;
-  const start = performance.now(), dur = 1100;
-  const fmt = (v: number) => `${v < 0 ? "−" : v > 0 ? "+" : ""}${Math.abs(Math.round(v))}${suffix}`;
-  const step = (t: number) => {
-    const p = Math.min(1, (t - start) / dur), eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = fmt(target * eased);
-    if (p < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-}
-function arm(el: Element) {
-  el.classList.add("in");
-  el.querySelectorAll<SVGPathElement>(".g-fg").forEach((p) => (p.style.strokeDasharray = `${p.dataset.len} 400`));
-  el.querySelectorAll<HTMLElement>("[data-count]").forEach(countUp);
-}
+// ---------- animate the charts when they scroll into view ----------
 const io = new IntersectionObserver((entries) => {
-  for (const e of entries) if (e.isIntersecting) { arm(e.target); io.unobserve(e.target); }
-}, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
-document.querySelectorAll(".reveal, .proof").forEach((el) => io.observe(el));
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}, { threshold: 0.2 });
+document.querySelectorAll("#benchCats, #benchModes").forEach((el) => (reduced ? el.classList.add("in") : io.observe(el)));
