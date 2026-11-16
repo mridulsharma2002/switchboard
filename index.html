@@ -4,124 +4,144 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Switchboard</title>
-  <meta name="description" content="A router that picks the right Claude model for every step of a task and switches mid-task when the work gets harder or easier." />
+  <meta name="description" content="Switchboard sends each step of a task to the cheapest Claude model that can do it well, checks the work, and moves up a model when a check fails." />
+  <meta name="color-scheme" content="light dark" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M6 22h6l4-12h4l6 0' stroke='%2334d399' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111'/%3E%3Ccircle cx='9' cy='9' r='3' fill='%23ffb547'/%3E%3Ccircle cx='23' cy='23' r='3' fill='none' stroke='%23fff' stroke-width='2'/%3E%3Cpath d='M9 9 C9 18 23 14 23 23' stroke='%23ffb547' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 </head>
 <body>
-  <header class="wrap top">
-    <a class="brand" href="./"><span class="logo"></span>Switchboard</a>
-    <a class="gh" href="https://github.com/mridulsharma2002/switchboard" target="_blank" rel="noopener">Source</a>
-  </header>
+  <main class="col">
+    <nav class="top">
+      <a class="back" href="https://mridulmerges.ca">← mridulmerges.ca</a>
+      <a class="back" href="https://github.com/mridulsharma2002/switchboard" target="_blank" rel="noopener">Code ↗</a>
+    </nav>
 
-  <main class="wrap">
-    <section class="hero">
-      <h1>The right Claude model for every step.</h1>
-      <p class="lead">Switchboard plans your task, sends each step to the cheapest model that can do it well, checks the work, and switches models mid-task: up when a check fails, back down when the work gets easy.</p>
-    </section>
+    <header class="intro">
+      <div class="who">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9"/><circle class="j1" cx="9" cy="9" r="3"/><circle class="j2" cx="23" cy="23" r="3"/><path d="M9 9 C9 18 23 14 23 23"/></svg>
+        <div>
+          <h1>Switchboard</h1>
+          <p class="sub">Side project No. 1 · by Mridul Sharma</p>
+        </div>
+      </div>
+      <p>Most AI tasks mix hard parts and easy parts. Switchboard splits a task into steps and sends each one to the cheapest Claude model that can do it well. A small model checks every step. If a check fails, the step moves up a model and tries again.</p>
+    </header>
 
-    <section class="card composer">
-      <label for="prompt" class="label">Your task</label>
-      <textarea id="prompt" rows="6" placeholder="Paste a prompt or a multi-step task…"></textarea>
-      <div class="examples" id="examples"></div>
+    <figure class="stage" aria-label="Demo: a four-step task being routed between models">
+      <div class="stage-top">
+        <span><i class="dot live"></i>Demo run</span>
+        <span class="dim" id="heroStatus">Patching step 1</span>
+      </div>
+      <div id="heroBoard" class="board"></div>
+      <ol class="ticker" id="heroTicker" aria-live="off"></ol>
+    </figure>
+    <p class="caption">Scripted replies. Step 2 fails its check on Sonnet and moves up to Opus. The README drops down to Haiku.</p>
+
+    <section id="try">
+      <h2>Try it</h2>
+      <p class="muted">Preview the routing for free, or run it live with your own API key.</p>
+
+      <div class="field">
+        <label for="prompt" class="sr">Your task</label>
+        <textarea id="prompt" rows="6" placeholder="Paste a prompt or a multi-step task…"></textarea>
+        <div class="examples" id="examples" role="group" aria-label="Examples"></div>
+      </div>
 
       <div class="controls">
         <div class="seg" role="radiogroup" aria-label="Routing mode" id="mode">
-          <button data-mode="save" role="radio">Save money</button>
-          <button data-mode="balanced" role="radio" class="on">Balanced</button>
-          <button data-mode="quality" role="radio">Best quality</button>
+          <button data-mode="save" role="radio" aria-checked="false">Save money</button>
+          <button data-mode="balanced" role="radio" aria-checked="true" class="on">Balanced</button>
+          <button data-mode="quality" role="radio" aria-checked="false">Best quality</button>
+          <span class="seg-thumb" aria-hidden="true"></span>
         </div>
-        <label class="budget">Budget cap <span>$</span><input id="budget" type="number" min="0.01" step="0.05" value="0.50" /></label>
+        <label class="budget">Budget cap <span class="money">$<input id="budget" type="number" min="0.01" step="0.05" value="0.50" inputmode="decimal" /></span></label>
       </div>
 
       <details class="key" id="keybox">
-        <summary>Run it live with your own API key</summary>
-        <p class="muted">Your key stays in this browser and is sent only to api.anthropic.com. Without a key you can still preview the routing for free.</p>
+        <summary>Use your own API key<span class="chev" aria-hidden="true">+</span></summary>
+        <p class="muted small">Your key stays in this browser and goes only to api.anthropic.com. There's no server in between.</p>
         <div class="keyrow">
-          <input id="apikey" type="password" autocomplete="off" placeholder="sk-ant-…" />
+          <input id="apikey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" aria-label="Anthropic API key" />
           <label class="remember"><input type="checkbox" id="remember" /> Remember on this device</label>
         </div>
       </details>
 
       <div class="actions">
-        <button id="preview" class="btn ghost">Preview routing</button>
-        <button id="runlive" class="btn primary">Run live</button>
-      </div>
-    </section>
-
-    <section id="results" class="results hidden">
-      <div class="stats">
-        <div class="stat"><span class="k" id="spentLabel">Spent</span><span class="v" id="spent">$0.0000</span></div>
-        <div class="stat"><span class="k">One Opus call (est.)</span><span class="v" id="opus">$0.0000</span></div>
-        <div class="stat"><span class="k">Saved</span><span class="v good" id="saved">0%</span></div>
-        <div class="stat"><span class="k">Model switches</span><span class="v" id="switches">0</span></div>
+        <button id="preview" class="btn">Preview routing</button>
+        <button id="runlive" class="btn ink">Run live</button>
       </div>
 
-      <div class="card">
-        <div class="cardhead"><h2>Route</h2><span class="muted" id="routeNote"></span></div>
-        <div id="lanes" class="lanes"></div>
-      </div>
-
-      <div class="grid2">
-        <div class="card">
-          <div class="cardhead"><h2>Timeline</h2></div>
-          <ol id="timeline" class="timeline"></ol>
+      <div id="results" class="results">
+        <dl class="meters">
+          <div><dt id="spentLabel">Estimated cost</dt><dd id="spent">$0.000</dd></div>
+          <div><dt>One Opus call</dt><dd id="opus">$0.000</dd></div>
+          <div><dt>Difference</dt><dd id="saved">0%</dd></div>
+          <div><dt>Model changes</dt><dd id="switches">0</dd></div>
+        </dl>
+        <div class="stage">
+          <div class="stage-top">
+            <span><i class="dot" id="runDot"></i>Route</span>
+            <span class="dim" id="routeNote"></span>
+          </div>
+          <div id="board" class="board"></div>
+          <ol id="timeline" class="oplog"></ol>
         </div>
-        <div class="card">
-          <div class="cardhead"><h2>Answer</h2><button id="copy" class="btn tiny ghost">Copy</button></div>
+        <div class="answer-card">
+          <div class="answer-head"><span>Answer</span><button id="copy" class="btn tiny">Copy</button></div>
           <div id="answer" class="answer muted">Run it live to see the answer here.</div>
         </div>
       </div>
     </section>
 
-    <section class="bench" id="bench">
-      <div class="benchhead">
-        <h2>Benchmark</h2>
-        <span class="tag">Simulated · no API calls</span>
-      </div>
-      <p class="muted" id="benchIntro"></p>
-      <div class="stats" id="benchStats"></div>
-      <div class="grid2">
-        <div class="card">
-          <div class="cardhead"><h2>Cost by kind of prompt</h2><span class="muted">Switchboard vs one Opus call</span></div>
-          <div id="benchCats" class="bars"></div>
-        </div>
-        <div class="card">
-          <div class="cardhead"><h2>By routing mode</h2></div>
-          <table class="modes" id="benchModes"></table>
-          <p class="muted small" id="benchEsc"></p>
-        </div>
-      </div>
-      <p class="muted small">How it's measured: 60 prompts in 6 categories (<a href="https://github.com/mridulsharma2002/switchboard/blob/main/bench/prompts.json" target="_blank" rel="noopener">bench/prompts.json</a>). Switchboard's free rules route every step. Token counts come from a cost model, not real responses. The baseline is one Opus 5.5 call writing the same amount of output. Switchboard's side includes the triage, planning and check calls. Thinking tokens aren't counted on either side. Reproduce it with <code>npm run bench</code>.</p>
+    <section id="bench">
+      <h2>Results</h2>
+      <p id="benchIntro"></p>
+      <p class="note">Simulated. The routing is real, but token counts come from a cost model, not real API calls.</p>
+
+      <div class="list" id="benchStats"></div>
+
+      <h3>By kind of prompt</h3>
+      <p class="muted small">One Opus call is 100. The dot is what Switchboard costs for the same work.</p>
+      <div class="list pad" id="benchCats"></div>
+      <div class="axis" aria-hidden="true"><span>0</span><span>50</span><span>100</span></div>
+
+      <h3>By mode</h3>
+      <div class="list" id="benchModes"></div>
+      <div class="mixkey" aria-hidden="true"><span><i class="haiku"></i>Haiku</span><span><i class="sonnet"></i>Sonnet</span><span><i class="opus"></i>Opus</span><span><i class="fable"></i>Fable</span></div>
+
+      <p id="benchEsc"></p>
+      <p class="muted small">How it's measured: 60 prompts in 6 kinds (<a href="https://github.com/mridulsharma2002/switchboard/blob/main/bench/prompts.json" target="_blank" rel="noopener">bench/prompts.json</a>). Switchboard's free rules route every step, and a cost model estimates the tokens. The baseline is one Opus 5.5 call writing the same amount of output. Switchboard's side includes the triage, planning and check calls. Thinking tokens aren't counted on either side. Run <code>npm run bench</code> to reproduce it.</p>
     </section>
 
-    <section class="how">
+    <section id="how">
       <h2>How it works</h2>
-      <div class="flow">
-        <div class="node"><b>Triage</b><span>Free rules score the prompt. Haiku breaks ties.</span></div>
-        <div class="arrow">→</div>
-        <div class="node"><b>Plan</b><span>Big tasks get split into steps, each with its own difficulty.</span></div>
-        <div class="arrow">→</div>
-        <div class="node"><b>Route</b><span>Each step goes to the cheapest model for its difficulty.</span></div>
-        <div class="arrow">→</div>
-        <div class="node"><b>Check</b><span>Haiku grades the step. Fail → move up a model and retry.</span></div>
-        <div class="arrow">→</div>
-        <div class="node"><b>Compose</b><span>Finished steps are stitched into one answer, with no extra call.</span></div>
-      </div>
-<pre class="code"><code>for step in plan(task):
+      <ol class="steps">
+        <li><b>Triage.</b> Free rules score the task from 1 to 5. If they aren't sure, Haiku decides.</li>
+        <li><b>Plan.</b> A bigger task is split into 2 to 5 steps, each with its own difficulty.</li>
+        <li><b>Route.</b> Each step goes to the cheapest model for its difficulty.</li>
+        <li><b>Check.</b> Haiku grades the step. A fail moves it up one model, and it tries again with the reviewer's note.</li>
+        <li><b>Compose.</b> The finished steps are joined into one answer, with no extra call.</li>
+      </ol>
+<pre class="code"><code><span class="k">for</span> step <span class="k">in</span> plan(task):
     model = cheapest_model_for(step.difficulty)
-    loop:
-        out = run(model, step)          # busy or refused → next model
-        if check(out).passes: break
-        if over_budget or at_top: break
-        model = one_level_up(model)     # escalate and retry
-    after 2 clean passes: drop back down</code></pre>
-      <div class="ladder" id="ladder"></div>
+    <span class="k">loop</span>:
+        out = run(model, step)        <span class="c"># busy or refused → next model</span>
+        <span class="k">if</span> check(out).passes: <span class="k">break</span>
+        <span class="k">if</span> over_budget <span class="k">or</span> at_top: <span class="k">break</span>
+        model = one_level_up(model)   <span class="c"># escalate and retry</span>
+    <span class="c"># two clean passes in a row: drop back down</span></code></pre>
+      <h3>The models</h3>
+      <div class="list" id="ladder"></div>
+      <p class="muted small">USD per 1M tokens, input / output. Claude API list prices.</p>
     </section>
-  </main>
 
-  <footer class="wrap foot">Built in public by <a href="https://www.linkedin.com/in/mridulmerges" target="_blank" rel="noopener">Mridul Sharma</a> · Tech, explained simply</footer>
+    <footer class="foot">
+      <p>Built in public by <a href="https://mridulmerges.ca">Mridul Sharma</a>. Not affiliated with Anthropic.</p>
+      <p class="muted">© 2026 · MIT licensed</p>
+    </footer>
+  </main>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
